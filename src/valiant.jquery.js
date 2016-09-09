@@ -58,7 +58,8 @@ three.js r65 or higher
             muted: true,
             debug: false,
             flatProjection: false,
-            autoplay: true
+            autoplay: true,
+            videoid: null
         };
 
     // The actual plugin constructor
@@ -152,7 +153,7 @@ three.js r65 or higher
             } else {
                 this._isVideo = true;
                 // create off-dom video player
-                this._video = document.createElement( 'video' );
+                this._video = this.options.videoid ? document.getElementById(this.options.videoid) : document.createElement( 'video' );
                 this._video.setAttribute('crossorigin', this.options.crossOrigin);
                 this._video.style.display = 'none';
                 $(this.element).append( this._video );
@@ -164,6 +165,10 @@ three.js r65 or higher
                 var self = this;
 
                 // attach video player event listeners
+                this._video.addEventListener("loadedmetadata", function() {
+                    self.resizeGL($(self.element).width(), $(self.element).height());
+                });
+
                 this._video.addEventListener("ended", function() {
 
                 });
@@ -249,6 +254,7 @@ three.js r65 or higher
 
             // hide controls if option is set
             if(this.options.hideControls) {
+                $(this.element).find('.valiant-progress-bar').hide();
                 $(this.element).find('.controls').hide();
             }
 
